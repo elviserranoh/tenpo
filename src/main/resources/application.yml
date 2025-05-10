@@ -2,9 +2,9 @@ spring:
   application:
     name: challenge
   r2dbc:
-    url: r2dbc:postgresql://localhost:5432/tenpodb
-    username: root
-    password: root
+    url: ${DB_URL:r2dbc:postgresql://localhost:5432/tenpodb}
+    username: ${DB_USER:root}
+    password: ${DB_PASS:root}
     pool:
       enabled: true
       initial-size: 10
@@ -15,7 +15,7 @@ spring:
       port: 6379
       timeout: 6000
   kafka:
-    bootstrap-servers: localhost:9092
+    bootstrap-servers: ${KAFKA_BROKER:localhost:9092}
     topic:
       history:
         created: com.tenpo.informatic.challenge.history_call
@@ -49,3 +49,4 @@ percentage:
 logging:
   level:
     org.tenpo.challenge.infrastructure.external: DEBUG
+

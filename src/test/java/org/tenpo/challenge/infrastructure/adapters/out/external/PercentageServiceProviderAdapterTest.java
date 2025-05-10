@@ -1,12 +1,10 @@
 package org.tenpo.challenge.infrastructure.adapters.out.external;
 
-import org.apache.kafka.clients.admin.AdminClient;
-import org.apache.kafka.clients.admin.AdminClientConfig;
+import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
+import com.github.tomakehurst.wiremock.junit5.WireMockExtension;
 import org.apache.kafka.clients.admin.NewTopic;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,8 +12,6 @@ import org.springframework.boot.testcontainers.service.connection.ServiceConnect
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.redis.core.ReactiveRedisTemplate;
 import org.springframework.http.HttpStatus;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.tenpo.challenge.domain.vo.DynamicPercentage;
 import org.tenpo.challenge.infrastructure.adapters.out.external.dto.DynamicPercentageResponse;
@@ -26,10 +22,7 @@ import org.testcontainers.kafka.KafkaContainer;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import java.util.Collections;
 import java.util.Objects;
-import java.util.Properties;
-import java.util.concurrent.ExecutionException;
 
 @SpringBootTest
 class PercentageServiceProviderAdapterTest {
@@ -38,6 +31,11 @@ class PercentageServiceProviderAdapterTest {
     private static String topicName;
 
     private final static String DYNAMIC_PERCENTAGE_CACHE_KEY = "tenpo:percentage:dynamic";
+
+    @RegisterExtension
+    static WireMockExtension wireMockServer = WireMockExtension.newInstance()
+            .options(WireMockConfiguration.wireMockConfig().dynamicPort()) // <-- Clave aquí
+            .build();
 
     @Container
     @ServiceConnection
@@ -54,6 +52,12 @@ class PercentageServiceProviderAdapterTest {
     @ServiceConnection
     static KafkaContainer kafkaContainer = new KafkaContainer("apache/kafka-native:3.8.0");
 
+    @Bean
+    public NewTopic historyTestTopic() {
+        return new NewTopic(topicName, 1, (short) 1);
+    }
+
+
     @Autowired
     private WebClient.Builder webClient;
 
@@ -62,11 +66,6 @@ class PercentageServiceProviderAdapterTest {
 
     @Autowired
     private ReactiveRedisTemplate<String, DynamicPercentageResponse> reactiveRedisTemplateMock;
-
-    @Bean
-    public NewTopic historyTestTopic() {
-        return new NewTopic(topicName, 1, (short) 1);
-    }
 
     @Test
     void whenFetchDynamicPercentageThenReturnDynamicPercentageResponseWithStatus200() {
