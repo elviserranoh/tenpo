@@ -1,27 +1,29 @@
 services:
 
-  tenpo:
-    image: elviserranoh/tenpo:0.0.2
-    restart: always
-    depends_on:
-      - db
-      - redis
-      - kafka-broker-1
-    environment:
-      DB_URL: r2dbc:postgresql://db:5432/tenpodb
-      DB_USER: root
-      DB_PASS: root
-      KAFKA_BROKER: kafka-broker-1:19092
-    networks:
-      - tenpo-net
-    ports:
-      - "8080:8080"
-    healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:9000/actuator/health" ]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
+    tenpo:
+      image: elviserranoh/tenpo:0.0.3
+      restart: always
+      depends_on:
+        - db
+        - redis
+        - kafka-broker-1
+      environment:
+        DB_URL: r2dbc:postgresql://db:5432/tenpodb
+        DB_URL_LIQUIBASE: jdbc:postgresql://db:5432/tenpodb
+        DB_USER: root
+        DB_PASS: root
+        KAFKA_BROKER: kafka-broker-1:19092
+        SERVER_PORT: 8080
+      networks:
+        - tenpo-net
+      ports:
+        - "8080:8080"
+      healthcheck:
+        test: [ "CMD", "curl", "-f", "http://localhost:9000/actuator/health" ]
+        interval: 30s
+        timeout: 10s
+        retries: 3
+        start_period: 60s
 
   db:
     image: postgres:17-alpine
@@ -131,7 +133,7 @@ services:
       KAFKA_GROUP_INITIAL_REBALANCE_DELAY_MS: 0 # Útil para desarrollo, acelera la asignación de particiones.
       KAFKA_LOG_DIRS: '/var/lib/kafka/data/logs' # Directorio de datos de Kafka
     volumes:
-      - "./volumes/kafka/broker-1:/var/lib/kafka/data"
+      - kafka_tenpo_data:/var/lib/kafka/data
     networks:
       - tenpo-net
 
@@ -156,9 +158,12 @@ services:
       kafka-topics --bootstrap-server kafka-broker-1:19092 --list
       "
 
-volumes:
-  postgres_tenpo_data:
-
 networks:
   tenpo-net:
     external: true
+
+volumes:
+  postgres_tenpo_data:
+  kafka_tenpo_data:
+
+

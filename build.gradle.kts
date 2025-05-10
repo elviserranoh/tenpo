@@ -27,11 +27,16 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-redis-reactive")
 	implementation("org.springframework.cloud:spring-cloud-starter-contract-stub-runner")
 
+	implementation("org.springdoc:springdoc-openapi-starter-webflux-api:2.8.8")
+	implementation("org.springdoc:springdoc-openapi-starter-webflux-ui:2.8.8")
+
 	implementation("org.springframework.kafka:spring-kafka:3.3.5")
 	implementation("io.projectreactor.kafka:reactor-kafka:1.3.23")
 
 	runtimeOnly("org.postgresql:postgresql")
+	runtimeOnly("org.postgresql:postgresql")
 	runtimeOnly("org.postgresql:r2dbc-postgresql")
+	implementation("org.liquibase:liquibase-core")
 
 	compileOnly("org.projectlombok:lombok")
 	annotationProcessor("org.projectlombok:lombok")

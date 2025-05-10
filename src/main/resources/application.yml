@@ -28,7 +28,12 @@ spring:
       key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
       auto-offset-reset: earliest # Empezar a leer desde el inicio si no hay offset previo
-#      enable-auto-commit: true
+  liquibase:
+    change-log: classpath:/db/changelog/liquibase.xml
+    enabled: true
+    url: ${DB_URL_LIQUIBASE:jdbc:postgresql://localhost:5432/tenpodb}
+    user: ${DB_USER:root}
+    password: ${DB_PASS:root}
 
 management:
   endpoints:
@@ -50,3 +55,11 @@ logging:
   level:
     org.tenpo.challenge.infrastructure.external: DEBUG
 
+springdoc:
+  swagger-ui:
+    enabled: true
+    path: /swagger-ui.html
+  api-docs.path: /v3/api-docs
+
+server:
+  port: ${SERVER_PORT:8080}
