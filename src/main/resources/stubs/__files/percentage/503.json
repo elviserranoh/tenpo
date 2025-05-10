@@ -1,0 +1,10 @@
+{
+  "status": "ERROR",
+  "result": null,
+  "message": "Error al intentar buscar el porcentaje en el microservicio externo, ademas no se encontro el porcentaje en la cache: 404 Not Found from GET http://localhost:8881/get/percentages",
+  "endpoint": "http://localhost:8881/get/percentages",
+  "parameters": {
+    "secondNumber": 45,
+    "firstNumber": 55
+  }
+}

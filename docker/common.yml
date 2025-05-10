@@ -1,0 +1,4 @@
+
+networks:
+  tenpo-net:
+    external: true

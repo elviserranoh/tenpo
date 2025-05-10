@@ -1,0 +1,51 @@
+spring:
+  application:
+    name: challenge
+  r2dbc:
+    url: r2dbc:postgresql://localhost:5432/tenpodb
+    username: root
+    password: root
+    pool:
+      enabled: true
+      initial-size: 10
+      max-size: 20
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 6000
+  kafka:
+    bootstrap-servers: localhost:9092
+    topic:
+      history:
+        created: com.tenpo.informatic.challenge.history_call
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.apache.kafka.common.serialization.StringSerializer
+      acks: all
+    consumer:
+      group-id: call-history-group
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      auto-offset-reset: earliest # Empezar a leer desde el inicio si no hay offset previo
+#      enable-auto-commit: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health
+
+wiremock:
+  server:
+    port: 8881
+  stubs:
+    path: stubs
+
+percentage:
+  service:
+    url: http://localhost:8881
+
+logging:
+  level:
+    org.tenpo.challenge.infrastructure.external: DEBUG

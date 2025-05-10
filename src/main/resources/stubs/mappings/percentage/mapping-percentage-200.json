@@ -1,0 +1,19 @@
+{
+  "request": {
+    "method": "GET",
+    "urlPath": "/get/percentages",
+    "headers": {
+      "X-MOCK": {
+        "contains": "200"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "bodyFileName": "percentage/200.json",
+    "transformers": ["response-template"]
+  }
+}

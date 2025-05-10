@@ -1,0 +1,3 @@
+{
+  "rate": "{{randomInt lower=1 upper=100}}"
+}
