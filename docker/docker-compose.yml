@@ -1,7 +1,7 @@
 services:
 
   tenpo:
-    image: tenpo:0.0.5
+    image: elviserranoh/tenpo:0.0.5
     restart: always
     depends_on:
       - db
