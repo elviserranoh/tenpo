@@ -1,7 +1,7 @@
 services:
 
   tenpo:
-    image: elviserranoh/tenpo:0.0.3
+    image: tenpo:0.0.5
     restart: always
     depends_on:
       - db
@@ -14,16 +14,19 @@ services:
       DB_PASS: root
       KAFKA_BROKER: kafka-broker-1:19092
       SERVER_PORT: 8080
+      REDIS_URL: redis
+      REDIS_PORT: 6379
     networks:
       - tenpo-net
     ports:
+      - "9010:9010"
       - "8080:8080"
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:9000/actuator/health" ]
       interval: 30s
       timeout: 10s
       retries: 3
-      start_period: 60s
+      start_period: 180s
 
   db:
     image: postgres:17-alpine
@@ -48,7 +51,7 @@ services:
       retries: 10
 
   redis:
-    image: redis:8.0-alpine
+    image: redis:latest
     restart: always
     ports:
       - "6379:6379"
@@ -57,12 +60,16 @@ services:
       interval: 5s
       timeout: 3s
       retries: 3
+    networks:
+      - tenpo-net
 
   redis-commander:
     image: rediscommander/redis-commander:latest
     restart: always
     environment:
       - REDIS_HOSTS=local:redis:6379
+    networks:
+      - tenpo-net
     ports:
       - "8081:8081"
     depends_on:

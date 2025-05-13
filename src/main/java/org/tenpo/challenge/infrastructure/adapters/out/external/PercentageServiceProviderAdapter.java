@@ -79,7 +79,8 @@ public class PercentageServiceProviderAdapter implements PercentageBackend {
                     return redisTemplate.opsForValue()
                             .set(DYNAMIC_PERCENTAGE_CACHE_KEY, fetchedPercentage, DYNAMIC_PERCENTAGE_CACHE_DURATION)
                             .doOnError(cacheWriteError ->
-                                    log.warn("Ha fallado el intento de escribir en redis: clave {}. Error: {}", DYNAMIC_PERCENTAGE_CACHE_KEY, cacheWriteError.getMessage())
+                                    log.warn("Ha fallado el intento de escribir en redis: clave {}. Error: {}",
+                                            DYNAMIC_PERCENTAGE_CACHE_KEY, cacheWriteError.getMessage(), cacheWriteError)
                             )
                             .thenReturn(fetchedPercentage) // Devuelve el porcentaje obtenido incluso si guarda el guardado en cache
                             .onErrorReturn(fetchedPercentage); // Asegurarse de devolver el valor asi falle
@@ -97,7 +98,7 @@ public class PercentageServiceProviderAdapter implements PercentageBackend {
                         log.error("Servicio externo ha respondido null");
                         return Mono.error(new IllegalStateException("Servicio externo ha respondido null"));
                     }
-                    log.info("Porcentaje obtenido del servicio externo: {}", response.rate());
+                    log.info("Porcentaje obtenido del servicio externo: {}", response);
                     return Mono.just(response);
                 })
                 .retryWhen(Retry.backoff(3, Duration.ofSeconds(1)) // Reintentar 3 veces con backoff exponencial empezando en 1 segundo
